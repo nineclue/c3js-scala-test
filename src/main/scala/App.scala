@@ -16,9 +16,13 @@ object C3 extends js.Object {
 object App {
     // @JSGlobal
     def callback(d: js.Dynamic) = {
-        println(d.value)
         println(d.id)
-        println(d.i)
+        // println(d.x)
+        // println(d.value)
+        println(d.index)
+        // println(d.name)
+
+        // println(js.Object.properties(d))  : x, value, id, index, name
     }
 
     def c3test() = {
@@ -39,7 +43,8 @@ object App {
                 Seq.apply[Any]("자료2", 50, 0, 10, 0, 15, 25).toJSArray
             ).toJSArray,
             `type` = "bar",
-            onmouseover = callback(_))
+            groups = Seq(Seq("자료1", "자료2").toJSArray).toJSArray,
+            onclick = callback(_))
         // println(d)
         val axisOpt = js.Dynamic.literal(`type` = "category",
             categories = Seq("1월", "2월", "3월", "4월", "5월", "6월").toJSArray)
