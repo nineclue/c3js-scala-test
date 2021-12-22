@@ -5,6 +5,8 @@ enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin)
 
 libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % "2.0.0",
+      "com.raquo" %%% "laminar" % "0.13.0",
+      "com.github.uosis" %%% "laminar-web-components-material" % "0.1.0",
 )
 
 /*
