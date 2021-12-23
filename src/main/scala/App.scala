@@ -2,6 +2,9 @@ import org.scalajs.dom
 import scala.scalajs.js
 import js.annotation._
 import js.JSConverters._
+import com.raquo.laminar.api.L._
+import com.github.uosis.laminar.webcomponents.material._
+import com.github.uosis.laminar.webcomponents.material.{List => MWCList}
 
 @js.native
 @JSGlobal
@@ -12,6 +15,8 @@ class Chart() extends js.Object
 object C3 extends js.Object {
     def generate(data: js.Dynamic): js.Object = js.native
 }
+
+case class Summary(c1: String, c2: String, v: Int)
 
 object App {
     // @JSGlobal
@@ -85,6 +90,25 @@ object App {
         val c = C3.generate(config)
     }
 
+    def showlist() = {
+        val sums = Seq(
+            Summary("VW", "Beatle", 3),
+            Summary("VW", "Polo", 5),
+            Summary("BMW", "520d", 5),
+            Summary("Merces Benz", "E300e", 7),
+            Summary("Hyundai Genesis", "G70", 6),
+            Summary("Hyundai", "Ionic5", 10)
+        )
+        val list = MWCList(
+            // _.noninteractive(true),
+            _.slots.default(
+                sums.map(s => 
+                    MWCList.ListItem(_.slots.default(span(s"${s.c1} - ${s.c2} : ${s.v}")))):_*
+            )
+        )
+        render(dom.document.getElementById("list"), list)
+    }
+
     def main(as: Array[String]): Unit = {
         println("Starting...")
         val shead = dom.document.getElementById("hscala")
@@ -99,7 +123,7 @@ object App {
         */
         c3donut()
 
-
+        showlist()        
     }
 
 }
