@@ -17,15 +17,12 @@ object App {
     // @JSGlobal
     def callback(d: js.Dynamic) = {
         println(d.id)
-        // println(d.x)
-        // println(d.value)
         println(d.index)
-        // println(d.name)
-
+ 
         // println(js.Object.properties(d))  : x, value, id, index, name
     }
 
-    def c3test() = {
+    def c3bar() = {
         /*
         var chart = c3.generate({
             bindto: '#chart1',
@@ -52,11 +49,57 @@ object App {
         val config = js.Dynamic.literal(bindto = "#chart2", data = d, axis = ax)
         val c = C3.generate(config)
     }
+
+    def c3donut() = {
+        val labelFormat: (Double, Double, String) => String = 
+            (value, ratio, id) => s"$id : $value(${(ratio * 100).round})"
+        val tooltipTitleFormat: (Int) => String =
+            (index) => s"검사($index)"
+        val tooltipNameFormat: (String, Double, String, Int) => String = 
+            // name == id ??
+            (name, ratio, id, index) => s"$name - $id[$index]"
+        val tooltipValueFormat: (Int, Double, String, Int) => String = 
+            (name, ratio, id, index) => s"$name(${(ratio * 100).round}%)"
+        val d = js.Dynamic.literal(columns = 
+            Seq(
+                Seq.apply[Any]("CT", 200).toJSArray,
+                Seq.apply[Any]("US", 250).toJSArray,
+                Seq.apply[Any]("MR", 77).toJSArray
+            ).toJSArray,
+            `type` = "donut",
+            onclick = callback(_))
+        val donut = js.Dynamic.literal(
+            title = "멋진 도넛 차트",
+            // label = js.Dynamic.literal(format = labelFormat)
+            )
+        val tooltip = js.Dynamic.literal(
+            format = js.Dynamic.literal(
+                // title = tooltipTitleFormat,
+                // name = tooltipNameFormat,
+                value = tooltipValueFormat
+            ),
+            // grouped = true
+        )
+        val config = js.Dynamic.literal(bindto ="#chart3", 
+            data = d, donut = donut, tooltip = tooltip)
+        val c = C3.generate(config)
+    }
+
     def main(as: Array[String]): Unit = {
         println("Starting...")
         val shead = dom.document.getElementById("hscala")
         shead.innerHTML = "스칼라.js C3"
-        c3test()
+        c3bar()
+
+        /* erased after c3 chart call
+        val chart3 = dom.document.getElementById("chart3")
+        val donutHead = dom.document.createElement("h2")
+        donutHead.innerHTML = "스칼라.js Donut 차트"
+        chart3.appendChild(donutHead)
+        */
+        c3donut()
+
+
     }
 
 }
