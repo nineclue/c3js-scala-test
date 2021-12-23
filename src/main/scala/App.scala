@@ -3,8 +3,8 @@ import scala.scalajs.js
 import js.annotation._
 import js.JSConverters._
 import com.raquo.laminar.api.L._
-import com.github.uosis.laminar.webcomponents.material._
-import com.github.uosis.laminar.webcomponents.material.{List => MWCList}
+// import com.github.uosis.laminar.webcomponents.material._
+// import com.github.uosis.laminar.webcomponents.material.{List => MWCList}
 
 @js.native
 @JSGlobal
@@ -19,11 +19,14 @@ object C3 extends js.Object {
 case class Summary(c1: String, c2: String, v: Int)
 
 object App {
+    val donutIndex = Var[Int](-1)
+
     // @JSGlobal
     def callback(d: js.Dynamic) = {
         println(d.id)
         println(d.index)
- 
+        val i = d.index.asInstanceOf[Int]
+        donutIndex.set(i)
         // println(js.Object.properties(d))  : x, value, id, index, name
     }
 
@@ -99,13 +102,39 @@ object App {
             Summary("Hyundai Genesis", "G70", 6),
             Summary("Hyundai", "Ionic5", 10)
         )
-        val list = MWCList(
-            // _.noninteractive(true),
-            _.slots.default(
-                sums.map(s => 
-                    MWCList.ListItem(_.slots.default(span(s"${s.c1} - ${s.c2} : ${s.v}")))):_*
-            )
+        val fsums = 
+            donutIndex.toObservable.map({ i => 
+                val filtered = i match {
+                    case 0 => 
+                        sums.filter(_.c1.startsWith("V"))
+                    case 1 =>
+                        sums.filter(_.c1.startsWith("H"))
+                    case _ =>
+                        sums
+                }
+                filtered.map(s => li(s"${s.c1} - ${s.c2} : ${s.v}"))
+            })
+        val list = ul(
+            children <-- fsums
+            /*
+            sums.map(s => 
+                li(span(s"${s.c1} - ${s.c2} : ${s.v}")))
+            */
         )
+        /*
+        donutIndex.toObservable.addObserver(Observer({ i => 
+            val filtered = i match {
+                case 0 => 
+                    sums.filter(_.c1.startsWith("V"))
+                case 1 =>
+                    sums.filter(_.c1.startsWith("H"))
+                case _ =>
+                    sums
+            }
+            // list.amendThis(thisNode => thisNode.slots.default = filtered)
+            // list.amendThis(_.`type`.slots.default())
+        }))(unsafeWindowOwner)
+        */
         render(dom.document.getElementById("list"), list)
     }
 
